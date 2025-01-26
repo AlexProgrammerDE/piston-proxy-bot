@@ -43,7 +43,7 @@ const router = AutoRouter();
 /**
  * A simple :wave: hello page to verify the worker is working.
  */
-router.get('/', (request, env) => {
+router.get('/', (request, env: Env) => {
   return new Response(`👋 ${env.DISCORD_APPLICATION_ID}`);
 });
 
@@ -59,8 +59,8 @@ type ProxyAPIResponse = {
   socks5: string[],
 }
 
-async function fetchProxies(): Promise<ProxyAPIResponse> {
-  const response = await fetch('https://api.proxyscrape.com/v2/?request=getproxies&protocol=http&timeout=10000&country=all&ssl=all&anonymity=all', {
+async function fetchProxies(env: Env): Promise<ProxyAPIResponse> {
+  const response = await fetch(env.PROXY_API_URL, {
     cf: {
       // 2 hours
       cacheTtl: 2 * 60 * 60,
@@ -80,7 +80,7 @@ async function fetchProxies(): Promise<ProxyAPIResponse> {
  * include a JSON payload described here:
  * https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object
  */
-router.post('/', async (request, env) => {
+router.post('/', async (request, env: Env) => {
   const parsedRequest = await verifyDiscordRequest(
       request,
       env,
@@ -124,7 +124,7 @@ router.post('/', async (request, env) => {
       }, []);
     }
 
-    const proxies = await fetchProxies();
+    const proxies = await fetchProxies(env);
     if (!proxies.success) {
       return new FormDataResponse({
         type: InteractionResponseType.ChannelMessageWithSource,
@@ -246,6 +246,7 @@ export interface Env {
   DISCORD_APPLICATION_ID: string
   DISCORD_PUBLIC_KEY: string
   DISCORD_TOKEN: string
+  PROXY_API_URL: string
 }
 
 async function verifyDiscordRequest(request: IRequest, env: Env): Promise<{
