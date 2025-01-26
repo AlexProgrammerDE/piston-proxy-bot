@@ -2,7 +2,12 @@ name = "piston-proxy-bot"
 main = "./src/server.ts"
 compatibility_date="2023-05-18"
 
-# [secrets]
-# DISCORD_TOKEN
-# DISCORD_PUBLIC_KEY
-# DISCORD_APPLICATION_ID
+[secrets]
+DISCORD_TOKEN
+DISCORD_PUBLIC_KEY
+DISCORD_APPLICATION_ID
+PROXY_API_URL
+
+[observability.logs]
+enabled = true
+
