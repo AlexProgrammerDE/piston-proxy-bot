@@ -1,15 +1,9 @@
-import prettier from 'eslint-plugin-prettier/recommended';
-import js from '@eslint/js';
-import globals from 'globals';
+// @ts-check
 
-export default [
-  {
-    languageOptions: {
-      globals: {
-        ...globals.browser,
-      },
-    },
-  },
-  js.configs.recommended,
-  prettier,
-];
+import eslint from '@eslint/js';
+import tseslint from 'typescript-eslint';
+
+export default tseslint.config(
+    eslint.configs.recommended,
+    tseslint.configs.recommended,
+);
