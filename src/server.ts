@@ -80,7 +80,7 @@ async function fetchProxies(env: Env): Promise<ProxyAPIResponse> {
  * include a JSON payload described here:
  * https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object
  */
-router.post('/', async (request, env: Env) => {
+router.post('/interactions', async (request, env: Env) => {
   const parsedRequest = await verifyDiscordRequest(
       request,
       env,
