@@ -257,7 +257,7 @@ async function verifyDiscordRequest(request: IRequest, env: Env): Promise<{
 }> {
   const signature = request.headers.get('x-signature-ed25519');
   const timestamp = request.headers.get('x-signature-timestamp');
-  const body = await request.text();
+  const body = await request.bytes();
   const isValidRequest =
       signature &&
       timestamp &&
