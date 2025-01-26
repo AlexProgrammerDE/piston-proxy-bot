@@ -1,7 +1,7 @@
 {
-  "name": "awwbot",
+  "name": "piston-proxy-bot",
   "version": "1.0.0",
-  "description": "A simple discord bot that uses intents to post pictures from r/aww",
+  "description": "Share proxies on Discord",
   "type": "module",
   "private": true,
   "main": "src/server.ts",
