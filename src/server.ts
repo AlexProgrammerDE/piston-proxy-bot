@@ -250,7 +250,6 @@ router.post('/interactions', async (request, env: Env) => {
     }
   }
 
-  console.error('Unknown Type');
   return new JsonResponse({error: 'Unknown Type'}, {status: 400});
 });
 router.all('*', () => new Response('Not Found.', {status: 404}));
