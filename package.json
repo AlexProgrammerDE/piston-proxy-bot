@@ -17,8 +17,8 @@
   "license": "MIT",
   "dependencies": {
     "discord-api-types": "^0.37.117",
-    "discord-interactions": "^4.1.0",
-    "itty-router": "^5.0.9"
+    "itty-router": "^5.0.9",
+    "tweetnacl": "^1.0.3"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20250124.3",

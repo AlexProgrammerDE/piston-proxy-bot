@@ -12,7 +12,7 @@ import {
   InteractionType,
   MessageFlags
 } from "discord-api-types/v10";
-import {verifyKey} from "discord-interactions";
+import nacl from "tweetnacl";
 
 class FormDataResponse extends Response {
   constructor(body: APIInteractionResponse | {
@@ -268,14 +268,17 @@ async function verifyDiscordRequest(request: IRequest, env: Env): Promise<{
 }> {
   const signature = request.headers.get('x-signature-ed25519');
   const timestamp = request.headers.get('x-signature-timestamp');
-  const body = await request.bytes();
+  const body = await request.text();
   const isValidRequest =
       signature &&
       timestamp &&
-      (await verifyKey(body, signature, timestamp, env.DISCORD_PUBLIC_KEY));
-  const parsedBody = JSON.parse(new TextDecoder().decode(body));
+      nacl.sign.detached.verify(
+          Buffer.from(timestamp + body),
+          Buffer.from(signature, "hex"),
+          Buffer.from(env.DISCORD_PUBLIC_KEY, "hex")
+      );
 
-  return {interaction: parsedBody, isValid: !!isValidRequest};
+  return {interaction: JSON.parse(body), isValid: !!isValidRequest};
 }
 
 export default {
