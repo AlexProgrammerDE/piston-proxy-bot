@@ -85,18 +85,19 @@ router.post('/interactions', async (request, env: Env) => {
       request,
       env,
   );
-  if (!parsedRequest.isValid) {
-    return new Response('Bad request signature.', {status: 401});
-  }
-
   const {interaction} = parsedRequest;
 
+  // Allow key to be invalid for PING requests.
   if (interaction.type === InteractionType.Ping) {
     // The `PING` message is used during the initial webhook handshake, and is
     // required to configure the webhook in the developer portal.
     return new FormDataResponse({
       type: InteractionResponseType.Pong,
     }, []);
+  }
+
+  if (!parsedRequest.isValid) {
+    return new Response('Bad request signature.', {status: 401});
   }
 
   if (interaction.type === InteractionType.ApplicationCommand) {
@@ -250,9 +251,7 @@ export interface Env {
 }
 
 async function verifyDiscordRequest(request: IRequest, env: Env): Promise<{
-  isValid: false
-} | {
-  isValid: true
+  isValid: boolean
   interaction: APIInteraction
 }> {
   const signature = request.headers.get('x-signature-ed25519');
@@ -262,11 +261,9 @@ async function verifyDiscordRequest(request: IRequest, env: Env): Promise<{
       signature &&
       timestamp &&
       (await verifyKey(body, signature, timestamp, env.DISCORD_PUBLIC_KEY));
-  if (!isValidRequest) {
-    return {isValid: false};
-  }
+  const parsedBody = JSON.parse(new TextDecoder().decode(body));
 
-  return {interaction: JSON.parse(new TextDecoder().decode(body)), isValid: true};
+  return {interaction: parsedBody, isValid: !!isValidRequest};
 }
 
 export default {
