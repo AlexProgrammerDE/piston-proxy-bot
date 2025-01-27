@@ -266,7 +266,7 @@ async function verifyDiscordRequest(request: IRequest, env: Env): Promise<{
     return {isValid: false};
   }
 
-  return {interaction: JSON.parse(body), isValid: true};
+  return {interaction: JSON.parse(new TextDecoder().decode(body)), isValid: true};
 }
 
 export default {
