@@ -10,4 +10,4 @@ compatibility_date="2024-11-11"
 
 [observability.logs]
 enabled = true
-
+invocation_logs = true
