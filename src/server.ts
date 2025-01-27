@@ -38,6 +38,18 @@ class FormDataResponse extends Response {
   }
 }
 
+class JsonResponse extends Response {
+  constructor(body: APIInteractionResponse | {
+    error: string
+  }, init?: ResponseInit) {
+    super(JSON.stringify(body), init || {
+      headers: {
+        'content-type': 'application/json;charset=UTF-8',
+      },
+    });
+  }
+}
+
 const router = AutoRouter();
 
 /**
@@ -91,9 +103,9 @@ router.post('/interactions', async (request, env: Env) => {
   if (interaction.type === InteractionType.Ping) {
     // The `PING` message is used during the initial webhook handshake, and is
     // required to configure the webhook in the developer portal.
-    return new FormDataResponse({
+    return new JsonResponse({
       type: InteractionResponseType.Pong,
-    }, []);
+    });
   }
 
   if (!parsedRequest.isValid) {
@@ -234,12 +246,12 @@ router.post('/interactions', async (request, env: Env) => {
         }]);
       }
       default:
-        return new FormDataResponse({error: 'Unknown Type'}, [], {status: 400});
+        return new JsonResponse({error: 'Unknown Type'}, {status: 400});
     }
   }
 
   console.error('Unknown Type');
-  return new FormDataResponse({error: 'Unknown Type'}, [], {status: 400});
+  return new JsonResponse({error: 'Unknown Type'}, {status: 400});
 });
 router.all('*', () => new Response('Not Found.', {status: 404}));
 
