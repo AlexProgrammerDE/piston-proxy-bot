@@ -162,11 +162,11 @@ router.post('/interactions', async (request, env: Env) => {
 
     if (interaction.channel.type !== ChannelType.DM
         && interaction.channel.type !== ChannelType.GroupDM
-        && interaction.channel.name !== "proxy") {
+        && interaction.channel.name !== "proxies") {
       return new JsonResponse({
         type: InteractionResponseType.ChannelMessageWithSource,
         data: {
-          content: 'This command can only be used in a #proxy channel.',
+          content: 'This command can only be used in a #proxies channel.',
           flags: MessageFlags.Ephemeral,
         },
       });
