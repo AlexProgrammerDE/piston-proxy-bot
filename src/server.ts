@@ -14,23 +14,63 @@ import {
 } from "discord-api-types/v10";
 import {verifyKey} from "discord-interactions";
 
+type FormDataEntries = {
+  name: string,
+  value: {
+    text: string,
+    type: string,
+  },
+  fileName?: string,
+}[]
+
+function formDataToMultipart(formData: FormDataEntries, boundary: string) {
+  const body = [];
+  for (const entry of formData) {
+    // Handle file or blob
+    body.push(
+        `--${boundary}\r\n` +
+        `Content-Disposition: form-data; name="${entry.name}"${entry.fileName ? `; filename="${entry.fileName}"` : ''}\r\n` +
+        `Content-Type: ${entry.value.type || 'application/octet-stream'}\r\n\r\n` +
+        `${entry.value.text}\r\n`
+    );
+  }
+  body.push(`--${boundary}--\r\n`);
+  return body.join('');
+}
+
 class FormDataResponse extends Response {
   constructor(body: APIInteractionResponse | {
     error: string
   }, extras: {
-    blob: Blob,
+    blob: {
+      type: string,
+      text: string
+    },
     name: string,
     fileName: string,
   }[]) {
-    const formData = new FormData();
-    formData.set('payload_json', new Blob([JSON.stringify(body)], {
-      type: 'application/json',
-    }));
+    const formData: FormDataEntries = [];
+    formData.push({
+      name: 'payload_json',
+      value: {
+        text: JSON.stringify(body),
+        type: 'application/json',
+      }
+    })
     for (const extra of extras) {
-      formData.set(extra.name, extra.blob, extra.fileName);
+      formData.push({
+        name: extra.name,
+        value: extra.blob,
+        fileName: extra.fileName
+      })
     }
 
-    super(formData);
+    const boundary = '----CloudflareWorkerBoundary';
+    super(formDataToMultipart(formData, boundary), {
+      headers: {
+        'content-type': `multipart/form-data; boundary=${boundary}`,
+      },
+    })
   }
 }
 
@@ -157,7 +197,10 @@ router.post('/interactions', async (request, env: Env) => {
             }]
           },
         }, [{
-          blob: new Blob([proxyList], {type: 'text/plain'}),
+          blob: {
+            type: 'text/plain',
+            text: proxyList,
+          },
           name: 'files[0]',
           fileName: 'http.txt',
         }]);
@@ -175,7 +218,10 @@ router.post('/interactions', async (request, env: Env) => {
             }]
           },
         }, [{
-          blob: new Blob([proxyList], {type: 'text/plain'}),
+          blob: {
+            type: 'text/plain',
+            text: proxyList,
+          },
           name: 'files[0]',
           fileName: 'https.txt',
         }]);
@@ -193,7 +239,10 @@ router.post('/interactions', async (request, env: Env) => {
             }]
           },
         }, [{
-          blob: new Blob([proxyList], {type: 'text/plain'}),
+          blob: {
+            type: 'text/plain',
+            text: proxyList,
+          },
           name: 'files[0]',
           fileName: 'socks4.txt',
         }]);
@@ -211,7 +260,10 @@ router.post('/interactions', async (request, env: Env) => {
             }]
           },
         }, [{
-          blob: new Blob([proxyList], {type: 'text/plain'}),
+          blob: {
+            type: 'text/plain',
+            text: proxyList,
+          },
           name: 'files[0]',
           fileName: 'socks5.txt',
         }]);
@@ -235,7 +287,10 @@ router.post('/interactions', async (request, env: Env) => {
             }]
           },
         }, [{
-          blob: new Blob([proxyList], {type: 'text/plain'}),
+          blob: {
+            type: 'text/plain',
+            text: proxyList,
+          },
           name: 'files[0]',
           fileName: 'proxies.txt',
         }]);
