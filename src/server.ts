@@ -21,7 +21,7 @@ class FormDataResponse extends Response {
     blob: Blob,
     name: string,
     fileName: string,
-  }[], init?: ResponseInit) {
+  }[]) {
     const formData = new FormData();
     formData.set('payload_json', new Blob([JSON.stringify(body)], {
       type: 'application/json',
@@ -30,11 +30,7 @@ class FormDataResponse extends Response {
       formData.set(extra.name, extra.blob, extra.fileName);
     }
 
-    super(formData, init || {
-      headers: {
-        'content-type': 'multipart/form-data',
-      },
-    });
+    super(formData);
   }
 }
 
