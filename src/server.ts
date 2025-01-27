@@ -115,36 +115,36 @@ router.post('/interactions', async (request, env: Env) => {
     if (interaction.data.name === INVITE_COMMAND.name) {
       const applicationId = env.DISCORD_APPLICATION_ID;
       const INVITE_URL = `https://discord.com/oauth2/authorize?client_id=${applicationId}`;
-      return new FormDataResponse({
+      return new JsonResponse({
         type: InteractionResponseType.ChannelMessageWithSource,
         data: {
           content: INVITE_URL,
           flags: MessageFlags.Ephemeral,
         },
-      }, []);
+      });
     }
 
     if (interaction.channel.type !== ChannelType.DM
         && interaction.channel.type !== ChannelType.GroupDM
         && interaction.channel.name !== "proxy") {
-      return new FormDataResponse({
+      return new JsonResponse({
         type: InteractionResponseType.ChannelMessageWithSource,
         data: {
           content: 'This command can only be used in a #proxy channel.',
           flags: MessageFlags.Ephemeral,
         },
-      }, []);
+      });
     }
 
     const proxies = await fetchProxies(env);
     if (!proxies.success) {
-      return new FormDataResponse({
+      return new JsonResponse({
         type: InteractionResponseType.ChannelMessageWithSource,
         data: {
           content: 'Failed to fetch proxies.',
           flags: MessageFlags.Ephemeral,
         },
-      }, []);
+      });
     }
 
     switch (interaction.data.name.toLowerCase()) {
