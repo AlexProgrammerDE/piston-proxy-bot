@@ -97,19 +97,18 @@ router.post('/interactions', async (request, env: Env) => {
       request,
       env,
   );
+  if (!parsedRequest.isValid) {
+    return new Response('Bad request signature.', {status: 401});
+  }
+
   const {interaction} = parsedRequest;
 
-  // Allow key to be invalid for PING requests.
   if (interaction.type === InteractionType.Ping) {
     // The `PING` message is used during the initial webhook handshake, and is
     // required to configure the webhook in the developer portal.
     return new JsonResponse({
       type: InteractionResponseType.Pong,
     });
-  }
-
-  if (!parsedRequest.isValid) {
-    return new Response('Bad request signature.', {status: 401});
   }
 
   if (interaction.type === InteractionType.ApplicationCommand) {
