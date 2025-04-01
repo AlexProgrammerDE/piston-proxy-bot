@@ -3,7 +3,8 @@
   "extends": [
     "config:recommended",
     ":disableDependencyDashboard",
-    ":preserveSemverRanges"
+    ":preserveSemverRanges",
+    ":semanticCommits"
   ],
   "ignorePaths": [
     "**/node_modules/**"
