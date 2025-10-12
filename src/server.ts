@@ -179,20 +179,6 @@ router.post("/interactions", async (request, env: Env) => {
       });
     }
 
-    if (
-      interaction.channel.type !== ChannelType.DM &&
-      interaction.channel.type !== ChannelType.GroupDM &&
-      interaction.channel.name !== "proxies"
-    ) {
-      return new JsonResponse({
-        type: InteractionResponseType.ChannelMessageWithSource,
-        data: {
-          content: "This command can only be used in a #proxies channel.",
-          flags: MessageFlags.Ephemeral,
-        },
-      });
-    }
-
     const proxies = await fetchProxies(env);
     if (!proxies.success) {
       return new JsonResponse({
