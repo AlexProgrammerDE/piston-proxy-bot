@@ -7,7 +7,5 @@
     "group:allNonMajor",
     ":semanticCommits"
   ],
-  "ignorePaths": [
-    "**/node_modules/**"
-  ]
+  "ignorePaths": ["**/node_modules/**"]
 }

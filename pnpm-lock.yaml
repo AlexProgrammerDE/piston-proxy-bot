@@ -27,6 +27,9 @@ importers:
       '@eslint/js':
         specifier: ^9.19.0
         version: 9.19.0
+      '@types/node':
+        specifier: ^24.7.2
+        version: 24.7.2
       dotenv:
         specifier: ^16.0.3
         version: 16.4.7
@@ -458,6 +461,9 @@ packages:
   '@sinonjs/text-encoding@0.7.3':
     resolution: {integrity: sha512-DE427ROAphMQzU4ENbliGYrBSYPXF+TtLg9S8vzeA+OF4ZKzoDdzfL8sxuMUGS/lgRhM6j1URSk9ghf7Xo1tyA==}
 
+  '@types/node@24.7.2':
+    resolution: {integrity: sha512-/NbVmcGTP+lj5oa4yiYxxeBjRivKQ5Ns1eSZeB99ExsEQ6rX5XYU1Zy/gGxY/ilqtD4Etx9mKyrPxZRetiahhA==}
+
   acorn-walk@8.3.4:
     resolution: {integrity: sha512-ueEepnujpqee2o5aIYnvHU6C0A42MNdsIDeqy5BydrkuC5R1ZuUFnm27EeFJGoEHJQgn3uleRvmTXaJgfXbt4g==}
     engines: {node: '>=0.4.0'}
@@ -672,6 +678,9 @@ packages:
 
   ufo@1.5.4:
     resolution: {integrity: sha512-UsUk3byDzKd04EyoZ7U4DOlxQaD14JUKQl6/P7wiX4FNvUfm3XL246n9W5AmqwW5RSFJ27NAuM0iLscAOYUiGQ==}
+
+  undici-types@7.14.0:
+    resolution: {integrity: sha512-QQiYxHuyZ9gQUIrmPo3IA+hUl4KYk8uSA7cHrcKd/l3p1OTpZcM0Tbp9x7FAtXdAYhlasd60ncPpgu6ihG6TOA==}
 
   undici@5.28.5:
     resolution: {integrity: sha512-zICwjrDrcrUE0pyyJc1I2QzBkLM8FINsgOrt6WjA+BgajVq9Nxu2PbFFXUrAggLfDXlZGZBVZYw7WNV5KiBiBA==}
@@ -952,6 +961,10 @@ snapshots:
 
   '@sinonjs/text-encoding@0.7.3': {}
 
+  '@types/node@24.7.2':
+    dependencies:
+      undici-types: 7.14.0
+
   acorn-walk@8.3.4:
     dependencies:
       acorn: 8.14.0
@@ -1191,6 +1204,8 @@ snapshots:
   typescript@5.7.3: {}
 
   ufo@1.5.4: {}
+
+  undici-types@7.14.0: {}
 
   undici@5.28.5:
     dependencies:

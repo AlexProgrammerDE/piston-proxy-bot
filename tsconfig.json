@@ -19,8 +19,6 @@
     "paths": {
       "*": ["node_modules/*", "node_modules/@types/*"]
     },
-    "types": [
-      "@cloudflare/workers-types",
-    ]
+    "types": ["@cloudflare/workers-types"]
   }
 }

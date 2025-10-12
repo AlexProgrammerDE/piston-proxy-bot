@@ -7,7 +7,7 @@
   "main": "src/server.ts",
   "scripts": {
     "start": "wrangler dev",
-    "fix": "biome check --write --unsafe'",
+    "fix": "biome check --write --unsafe",
     "check": "biome check",
     "register": "node src/register.ts",
     "publish": "wrangler deploy"
@@ -24,6 +24,7 @@
     "@biomejs/biome": "2.2.5",
     "@cloudflare/workers-types": "^4.20250124.3",
     "@eslint/js": "^9.19.0",
+    "@types/node": "^24.7.2",
     "dotenv": "^16.0.3",
     "globals": "^15.14.0",
     "sinon": "^19.0.2",

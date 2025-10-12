@@ -2,87 +2,107 @@
  * The core server that runs on a Cloudflare worker.
  */
 
-import {AutoRouter, IRequest} from 'itty-router';
-import {ALL_COMMAND, HTTP_COMMAND, HTTPS_COMMAND, INVITE_COMMAND, SOCKS4_COMMAND, SOCKS5_COMMAND} from './commands';
 import {
-  APIInteraction,
-  APIInteractionResponse,
+  type APIInteraction,
+  type APIInteractionResponse,
   ChannelType,
   InteractionResponseType,
   InteractionType,
-  MessageFlags
+  MessageFlags,
 } from "discord-api-types/v10";
-import {verifyKey} from "discord-interactions";
+import { verifyKey } from "discord-interactions";
+import { AutoRouter, type IRequest } from "itty-router";
+import {
+  ALL_COMMAND,
+  HTTP_COMMAND,
+  HTTPS_COMMAND,
+  INVITE_COMMAND,
+  SOCKS4_COMMAND,
+  SOCKS5_COMMAND,
+} from "./commands";
 
 type FormDataEntries = {
-  name: string,
+  name: string;
   value: {
-    text: string,
-    type: string,
-  },
-  fileName?: string,
-}[]
+    text: string;
+    type: string;
+  };
+  fileName?: string;
+}[];
 
 function formDataToMultipart(formData: FormDataEntries, boundary: string) {
   const body = [];
   for (const entry of formData) {
     // Handle file or blob
     body.push(
-        `--${boundary}\r\n` +
-        `Content-Disposition: form-data; name="${entry.name}"${entry.fileName ? `; filename="${entry.fileName}"` : ''}\r\n` +
-        `Content-Type: ${entry.value.type || 'application/octet-stream'}\r\n\r\n` +
-        `${entry.value.text}\r\n`
+      `--${boundary}\r\n` +
+        `Content-Disposition: form-data; name="${entry.name}"${entry.fileName ? `; filename="${entry.fileName}"` : ""}\r\n` +
+        `Content-Type: ${entry.value.type || "application/octet-stream"}\r\n\r\n` +
+        `${entry.value.text}\r\n`,
     );
   }
   body.push(`--${boundary}--\r\n`);
-  return body.join('');
+  return body.join("");
 }
 
 class FormDataResponse extends Response {
-  constructor(body: APIInteractionResponse | {
-    error: string
-  }, extras: {
-    blob: {
-      type: string,
-      text: string
-    },
-    name: string,
-    fileName: string,
-  }[]) {
+  constructor(
+    body:
+      | APIInteractionResponse
+      | {
+          error: string;
+        },
+    extras: {
+      blob: {
+        type: string;
+        text: string;
+      };
+      name: string;
+      fileName: string;
+    }[],
+  ) {
     const formData: FormDataEntries = [];
     formData.push({
-      name: 'payload_json',
+      name: "payload_json",
       value: {
         text: JSON.stringify(body),
-        type: 'application/json',
-      }
-    })
+        type: "application/json",
+      },
+    });
     for (const extra of extras) {
       formData.push({
         name: extra.name,
         value: extra.blob,
-        fileName: extra.fileName
-      })
+        fileName: extra.fileName,
+      });
     }
 
-    const boundary = '----CloudflareWorkerBoundary';
+    const boundary = "----CloudflareWorkerBoundary";
     super(formDataToMultipart(formData, boundary), {
       headers: {
-        'content-type': `multipart/form-data; boundary=${boundary}`,
+        "content-type": `multipart/form-data; boundary=${boundary}`,
       },
-    })
+    });
   }
 }
 
 class JsonResponse extends Response {
-  constructor(body: APIInteractionResponse | {
-    error: string
-  }, init?: ResponseInit) {
-    super(JSON.stringify(body), init || {
-      headers: {
-        'content-type': 'application/json;charset=UTF-8',
+  constructor(
+    body:
+      | APIInteractionResponse
+      | {
+          error: string;
+        },
+    init?: ResponseInit,
+  ) {
+    super(
+      JSON.stringify(body),
+      init || {
+        headers: {
+          "content-type": "application/json;charset=UTF-8",
+        },
       },
-    });
+    );
   }
 }
 
@@ -91,21 +111,23 @@ const router = AutoRouter();
 /**
  * A simple :wave: hello page to verify the worker is working.
  */
-router.get('/', (request, env: Env) => {
+router.get("/", (_request, env: Env) => {
   return new Response(`👋 ${env.DISCORD_APPLICATION_ID}`);
 });
 
-type ProxyAPIResponse = {
-  success: false
-} | {
-  success: true
-  update_time: number,
-  count: number,
-  http: string[],
-  https: string[],
-  socks4: string[],
-  socks5: string[],
-}
+type ProxyAPIResponse =
+  | {
+      success: false;
+    }
+  | {
+      success: true;
+      update_time: number;
+      count: number;
+      http: string[];
+      https: string[];
+      socks4: string[];
+      socks5: string[];
+    };
 
 async function fetchProxies(env: Env): Promise<ProxyAPIResponse> {
   const response = await fetch(env.PROXY_API_URL, {
@@ -113,11 +135,11 @@ async function fetchProxies(env: Env): Promise<ProxyAPIResponse> {
       // 2 hours
       cacheTtl: 2 * 60 * 60,
       cacheEverything: true,
-    }
+    },
   });
 
   if (!response.ok) {
-    return {success: false};
+    return { success: false };
   }
 
   return await response.json();
@@ -128,16 +150,13 @@ async function fetchProxies(env: Env): Promise<ProxyAPIResponse> {
  * include a JSON payload described here:
  * https://discord.com/developers/docs/interactions/receiving-and-responding#interaction-object
  */
-router.post('/interactions', async (request, env: Env) => {
-  const parsedRequest = await verifyDiscordRequest(
-      request,
-      env,
-  );
+router.post("/interactions", async (request, env: Env) => {
+  const parsedRequest = await verifyDiscordRequest(request, env);
   if (!parsedRequest.isValid) {
-    return new Response('Bad request signature.', {status: 401});
+    return new Response("Bad request signature.", { status: 401 });
   }
 
-  const {interaction} = parsedRequest;
+  const { interaction } = parsedRequest;
 
   if (interaction.type === InteractionType.Ping) {
     // The `PING` message is used during the initial webhook handshake, and is
@@ -160,13 +179,15 @@ router.post('/interactions', async (request, env: Env) => {
       });
     }
 
-    if (interaction.channel.type !== ChannelType.DM
-        && interaction.channel.type !== ChannelType.GroupDM
-        && interaction.channel.name !== "proxies") {
+    if (
+      interaction.channel.type !== ChannelType.DM &&
+      interaction.channel.type !== ChannelType.GroupDM &&
+      interaction.channel.name !== "proxies"
+    ) {
       return new JsonResponse({
         type: InteractionResponseType.ChannelMessageWithSource,
         data: {
-          content: 'This command can only be used in a #proxies channel.',
+          content: "This command can only be used in a #proxies channel.",
           flags: MessageFlags.Ephemeral,
         },
       });
@@ -177,7 +198,7 @@ router.post('/interactions', async (request, env: Env) => {
       return new JsonResponse({
         type: InteractionResponseType.ChannelMessageWithSource,
         data: {
-          content: 'Failed to fetch proxies.',
+          content: "Failed to fetch proxies.",
           flags: MessageFlags.Ephemeral,
         },
       });
@@ -185,146 +206,184 @@ router.post('/interactions', async (request, env: Env) => {
 
     switch (interaction.data.name.toLowerCase()) {
       case HTTP_COMMAND.name.toLowerCase(): {
-        const proxyList = proxies.http.join('\n');
-        return new FormDataResponse({
-          type: InteractionResponseType.ChannelMessageWithSource,
-          data: {
-            content: "Here are your HTTP proxies!",
-            attachments: [{
-              id: 0,
-              filename: 'http.txt',
-              description: 'HTTP Proxies',
-            }]
+        const proxyList = proxies.http.join("\n");
+        return new FormDataResponse(
+          {
+            type: InteractionResponseType.ChannelMessageWithSource,
+            data: {
+              content: "Here are your HTTP proxies!",
+              attachments: [
+                {
+                  id: 0,
+                  filename: "http.txt",
+                  description: "HTTP Proxies",
+                },
+              ],
+            },
           },
-        }, [{
-          blob: {
-            type: 'text/plain',
-            text: proxyList,
-          },
-          name: 'files[0]',
-          fileName: 'http.txt',
-        }]);
+          [
+            {
+              blob: {
+                type: "text/plain",
+                text: proxyList,
+              },
+              name: "files[0]",
+              fileName: "http.txt",
+            },
+          ],
+        );
       }
       case HTTPS_COMMAND.name.toLowerCase(): {
-        const proxyList = proxies.https.join('\n');
-        return new FormDataResponse({
-          type: InteractionResponseType.ChannelMessageWithSource,
-          data: {
-            content: "Here are your HTTPS proxies!",
-            attachments: [{
-              id: 0,
-              filename: 'https.txt',
-              description: 'HTTPS Proxies',
-            }]
+        const proxyList = proxies.https.join("\n");
+        return new FormDataResponse(
+          {
+            type: InteractionResponseType.ChannelMessageWithSource,
+            data: {
+              content: "Here are your HTTPS proxies!",
+              attachments: [
+                {
+                  id: 0,
+                  filename: "https.txt",
+                  description: "HTTPS Proxies",
+                },
+              ],
+            },
           },
-        }, [{
-          blob: {
-            type: 'text/plain',
-            text: proxyList,
-          },
-          name: 'files[0]',
-          fileName: 'https.txt',
-        }]);
+          [
+            {
+              blob: {
+                type: "text/plain",
+                text: proxyList,
+              },
+              name: "files[0]",
+              fileName: "https.txt",
+            },
+          ],
+        );
       }
       case SOCKS4_COMMAND.name.toLowerCase(): {
-        const proxyList = proxies.socks4.join('\n');
-        return new FormDataResponse({
-          type: InteractionResponseType.ChannelMessageWithSource,
-          data: {
-            content: "Here are your SOCKS4 proxies!",
-            attachments: [{
-              id: 0,
-              filename: 'socks4.txt',
-              description: 'SOCKS4 Proxies',
-            }]
+        const proxyList = proxies.socks4.join("\n");
+        return new FormDataResponse(
+          {
+            type: InteractionResponseType.ChannelMessageWithSource,
+            data: {
+              content: "Here are your SOCKS4 proxies!",
+              attachments: [
+                {
+                  id: 0,
+                  filename: "socks4.txt",
+                  description: "SOCKS4 Proxies",
+                },
+              ],
+            },
           },
-        }, [{
-          blob: {
-            type: 'text/plain',
-            text: proxyList,
-          },
-          name: 'files[0]',
-          fileName: 'socks4.txt',
-        }]);
+          [
+            {
+              blob: {
+                type: "text/plain",
+                text: proxyList,
+              },
+              name: "files[0]",
+              fileName: "socks4.txt",
+            },
+          ],
+        );
       }
       case SOCKS5_COMMAND.name.toLowerCase(): {
-        const proxyList = proxies.socks5.join('\n');
-        return new FormDataResponse({
-          type: InteractionResponseType.ChannelMessageWithSource,
-          data: {
-            content: "Here are your SOCKS5 proxies!",
-            attachments: [{
-              id: 0,
-              filename: 'socks5.txt',
-              description: 'SOCKS5 Proxies',
-            }]
+        const proxyList = proxies.socks5.join("\n");
+        return new FormDataResponse(
+          {
+            type: InteractionResponseType.ChannelMessageWithSource,
+            data: {
+              content: "Here are your SOCKS5 proxies!",
+              attachments: [
+                {
+                  id: 0,
+                  filename: "socks5.txt",
+                  description: "SOCKS5 Proxies",
+                },
+              ],
+            },
           },
-        }, [{
-          blob: {
-            type: 'text/plain',
-            text: proxyList,
-          },
-          name: 'files[0]',
-          fileName: 'socks5.txt',
-        }]);
+          [
+            {
+              blob: {
+                type: "text/plain",
+                text: proxyList,
+              },
+              name: "files[0]",
+              fileName: "socks5.txt",
+            },
+          ],
+        );
       }
       case ALL_COMMAND.name.toLowerCase(): {
         // noinspection HttpUrlsUsage
         const proxyList = [
-          proxies.http.map(url => `http://${url}`).join('\n'),
-          proxies.https.map(url => `https://${url}`).join('\n'),
-          proxies.socks4.map(url => `socks4://${url}`).join('\n'),
-          proxies.socks5.map(url => `socks5://${url}`).join('\n'),
+          proxies.http.map((url) => `http://${url}`).join("\n"),
+          proxies.https.map((url) => `https://${url}`).join("\n"),
+          proxies.socks4.map((url) => `socks4://${url}`).join("\n"),
+          proxies.socks5.map((url) => `socks5://${url}`).join("\n"),
         ].join("\n");
-        return new FormDataResponse({
-          type: InteractionResponseType.ChannelMessageWithSource,
-          data: {
-            content: "Here are your URL proxies!",
-            attachments: [{
-              id: 0,
-              filename: 'proxies.txt',
-              description: 'URL Proxies',
-            }]
+        return new FormDataResponse(
+          {
+            type: InteractionResponseType.ChannelMessageWithSource,
+            data: {
+              content: "Here are your URL proxies!",
+              attachments: [
+                {
+                  id: 0,
+                  filename: "proxies.txt",
+                  description: "URL Proxies",
+                },
+              ],
+            },
           },
-        }, [{
-          blob: {
-            type: 'text/plain',
-            text: proxyList,
-          },
-          name: 'files[0]',
-          fileName: 'proxies.txt',
-        }]);
+          [
+            {
+              blob: {
+                type: "text/plain",
+                text: proxyList,
+              },
+              name: "files[0]",
+              fileName: "proxies.txt",
+            },
+          ],
+        );
       }
       default:
-        return new JsonResponse({error: 'Unknown Type'}, {status: 400});
+        return new JsonResponse({ error: "Unknown Type" }, { status: 400 });
     }
   }
 
-  return new JsonResponse({error: 'Unknown Type'}, {status: 400});
+  return new JsonResponse({ error: "Unknown Type" }, { status: 400 });
 });
-router.all('*', () => new Response('Not Found.', {status: 404}));
+router.all("*", () => new Response("Not Found.", { status: 404 }));
 
 export interface Env {
-  DISCORD_APPLICATION_ID: string
-  DISCORD_PUBLIC_KEY: string
-  DISCORD_TOKEN: string
-  PROXY_API_URL: string
+  DISCORD_APPLICATION_ID: string;
+  DISCORD_PUBLIC_KEY: string;
+  DISCORD_TOKEN: string;
+  PROXY_API_URL: string;
 }
 
-async function verifyDiscordRequest(request: IRequest, env: Env): Promise<{
-  isValid: boolean
-  interaction: APIInteraction
+async function verifyDiscordRequest(
+  request: IRequest,
+  env: Env,
+): Promise<{
+  isValid: boolean;
+  interaction: APIInteraction;
 }> {
-  const signature = request.headers.get('x-signature-ed25519');
-  const timestamp = request.headers.get('x-signature-timestamp');
+  const signature = request.headers.get("x-signature-ed25519");
+  const timestamp = request.headers.get("x-signature-timestamp");
   const body = await request.bytes();
   const isValidRequest =
-      signature &&
-      timestamp &&
-      (await verifyKey(body, signature, timestamp, env.DISCORD_PUBLIC_KEY));
+    signature &&
+    timestamp &&
+    (await verifyKey(body, signature, timestamp, env.DISCORD_PUBLIC_KEY));
   const parsedBody = JSON.parse(new TextDecoder().decode(body));
 
-  return {interaction: parsedBody, isValid: !!isValidRequest};
+  return { interaction: parsedBody, isValid: !!isValidRequest };
 }
 
 export default {
