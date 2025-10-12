@@ -7,6 +7,7 @@
   "main": "src/server.ts",
   "scripts": {
     "start": "wrangler dev",
+    "typecheck": "tsc --noEmit",
     "fix": "biome check --write --unsafe",
     "check": "biome check",
     "register": "node src/register.ts",
