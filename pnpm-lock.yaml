@@ -24,9 +24,6 @@ importers:
       '@cloudflare/workers-types':
         specifier: ^4.20250124.3
         version: 4.20250124.3
-      '@eslint/js':
-        specifier: ^9.19.0
-        version: 9.19.0
       '@types/node':
         specifier: ^24.7.2
         version: 24.7.2
@@ -450,10 +447,6 @@ packages:
     engines: {node: '>=18'}
     cpu: [x64]
     os: [win32]
-
-  '@eslint/js@9.19.0':
-    resolution: {integrity: sha512-rbq9/g38qjfqFLOVPvwjIvFFdNziEC5S65jmjPw5r6A//QH+W91akh9irMwjDN8zKUTak6W9EsAv4m/7Wnw0UQ==}
-    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
 
   '@img/sharp-darwin-arm64@0.33.5':
     resolution: {integrity: sha512-UT4p+iz/2H4twwAoLCqfA9UH5pI6DggwKEGuaPy7nCVQ8ZsiY5PIcrRvD1DzuY3qYL07NtIQcWnBSY/heikIFQ==}
@@ -1041,8 +1034,6 @@ snapshots:
 
   '@esbuild/win32-x64@0.25.4':
     optional: true
-
-  '@eslint/js@9.19.0': {}
 
   '@img/sharp-darwin-arm64@0.33.5':
     optionalDependencies:
