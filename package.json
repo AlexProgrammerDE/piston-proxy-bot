@@ -17,12 +17,12 @@
   "author": "Justin Beckwith <justin.beckwith@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "discord-api-types": "^0.37.117",
+    "discord-api-types": "^0.38.0",
     "discord-interactions": "^4.1.0",
     "itty-router": "^5.0.9"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.2.5",
+    "@biomejs/biome": "2.2.6",
     "@cloudflare/workers-types": "^4.20250124.3",
     "@eslint/js": "^9.19.0",
     "@types/node": "^24.7.2",
