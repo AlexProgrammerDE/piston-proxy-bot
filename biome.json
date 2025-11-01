@@ -32,7 +32,7 @@
       "recommended": true
     },
     "domains": {
-      "project": "recommended"
+      "project": "all"
     }
   },
   "assist": {
