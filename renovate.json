@@ -1,11 +1,19 @@
 {
-  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "config:recommended",
-    ":disableDependencyDashboard",
-    ":preserveSemverRanges",
     "group:allNonMajor",
     ":semanticCommits"
   ],
-  "ignorePaths": ["**/node_modules/**"]
+  "packageRules": [
+    {
+      "matchUpdateTypes": [
+        "minor",
+        "patch",
+        "pin",
+        "digest"
+      ],
+      "automerge": true,
+      "automergeType": "branch"
+    }
+  ]
 }
