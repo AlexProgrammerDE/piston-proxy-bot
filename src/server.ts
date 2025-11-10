@@ -5,7 +5,6 @@
 import {
   type APIInteraction,
   type APIInteractionResponse,
-  ChannelType,
   InteractionResponseType,
   InteractionType,
   MessageFlags,
