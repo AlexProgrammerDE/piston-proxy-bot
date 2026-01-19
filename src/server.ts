@@ -197,7 +197,7 @@ router.post("/interactions", async (request, env: Env) => {
             type: InteractionResponseType.ChannelMessageWithSource,
             data: {
               content:
-                "Here are your HTTP proxies!\n-# Disclaimer: Most of these proxies might not work for you and might cause errors. If you are looking for more high-quality proxies, take a look at http://soulfiremc.com/get-proxies",
+                "Here are your HTTP proxies!\n-# Disclaimer: Most of these proxies might not work for you and might cause errors. If you are looking for more high-quality proxies, take a look at <http://soulfiremc.com/get-proxies>",
               attachments: [
                 {
                   id: 0,
@@ -226,7 +226,7 @@ router.post("/interactions", async (request, env: Env) => {
             type: InteractionResponseType.ChannelMessageWithSource,
             data: {
               content:
-                "Here are your HTTPS proxies!\n-# Disclaimer: Most of these proxies might not work for you and might cause errors. If you are looking for more high-quality proxies, take a look at http://soulfiremc.com/get-proxies",
+                "Here are your HTTPS proxies!\n-# Disclaimer: Most of these proxies might not work for you and might cause errors. If you are looking for more high-quality proxies, take a look at <http://soulfiremc.com/get-proxies>",
               attachments: [
                 {
                   id: 0,
@@ -255,7 +255,7 @@ router.post("/interactions", async (request, env: Env) => {
             type: InteractionResponseType.ChannelMessageWithSource,
             data: {
               content:
-                "Here are your SOCKS4 proxies!\n-# Disclaimer: Most of these proxies might not work for you and might cause errors. If you are looking for more high-quality proxies, take a look at http://soulfiremc.com/get-proxies",
+                "Here are your SOCKS4 proxies!\n-# Disclaimer: Most of these proxies might not work for you and might cause errors. If you are looking for more high-quality proxies, take a look at <http://soulfiremc.com/get-proxies>",
               attachments: [
                 {
                   id: 0,
@@ -284,7 +284,7 @@ router.post("/interactions", async (request, env: Env) => {
             type: InteractionResponseType.ChannelMessageWithSource,
             data: {
               content:
-                "Here are your SOCKS5 proxies!\n-# Disclaimer: Most of these proxies might not work for you and might cause errors. If you are looking for more high-quality proxies, take a look at http://soulfiremc.com/get-proxies",
+                "Here are your SOCKS5 proxies!\n-# Disclaimer: Most of these proxies might not work for you and might cause errors. If you are looking for more high-quality proxies, take a look at <http://soulfiremc.com/get-proxies>",
               attachments: [
                 {
                   id: 0,
@@ -319,7 +319,7 @@ router.post("/interactions", async (request, env: Env) => {
             type: InteractionResponseType.ChannelMessageWithSource,
             data: {
               content:
-                "Here are your URL proxies!\n-# Disclaimer: Most of these proxies might not work for you and might cause errors. If you are looking for more high-quality proxies, take a look at http://soulfiremc.com/get-proxies",
+                "Here are your URL proxies!\n-# Disclaimer: Most of these proxies might not work for you and might cause errors. If you are looking for more high-quality proxies, take a look at <http://soulfiremc.com/get-proxies>",
               attachments: [
                 {
                   id: 0,
