@@ -1,8 +1,14 @@
-name: 'Build and Test'
+name: Build and Test
 
 on:
   - push
   - pull_request
+
+permissions:
+  contents: read
+
+env:
+  CARGO_TERM_COLOR: always
 
 jobs:
   test:
@@ -10,30 +16,32 @@ jobs:
 
     runs-on: ubuntu-24.04
     steps:
-      - name: 'Checkout repository'
+      - name: Checkout repository
         uses: actions/checkout@v7
         with:
           persist-credentials: false
 
-      - uses: pnpm/action-setup@v6
-        name: Install pnpm
+      - name: Install Rust
+        uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
-          version: latest
-          run_install: false
+          toolchain: 1.97.1
+          components: clippy, rustfmt
+          target: wasm32-unknown-unknown
 
-      - name: Install Node.js
-        uses: actions/setup-node@v7
-        with:
-          node-version: lts/*
-          cache: 'pnpm'
+      - name: Cache Rust build artifacts
+        uses: Swatinem/rust-cache@v2
 
-      - name: Install dependencies
-        run: pnpm install
+      - name: Check formatting
+        run: cargo fmt --all -- --check
 
-      - name: Run typecheck
-        run: |
-          pnpm typecheck
+      - name: Run Clippy
+        run: cargo clippy --workspace --all-targets --all-features -- -D warnings
 
-      - name: Run check
-        run: |
-          pnpm exec biome ci
+      - name: Run tests
+        run: cargo test --workspace --all-features
+
+      - name: Install Worker builder
+        run: cargo install worker-build --version 0.8.5 --locked
+
+      - name: Build Worker
+        run: worker-build --release

@@ -1,12 +1,9 @@
 name = "piston-proxy-bot"
-main = "./src/server.ts"
-compatibility_date="2024-11-11"
+main = "build/worker/shim.mjs"
+compatibility_date = "2026-07-23"
 
-# [secrets]
-# DISCORD_TOKEN
-# DISCORD_PUBLIC_KEY
-# DISCORD_APPLICATION_ID
-# PROXY_API_URL
+[build]
+command = "worker-build --release"
 
 [observability.logs]
 enabled = true

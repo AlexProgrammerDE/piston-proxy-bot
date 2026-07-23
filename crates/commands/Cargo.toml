@@ -1,0 +1,12 @@
+[package]
+name = "piston-proxy-commands"
+version = "1.0.0"
+edition = "2024"
+rust-version = "1.97"
+description = "Shared Discord command definitions for piston-proxy-bot"
+license = "MIT"
+publish = false
+
+[dependencies]
+twilight-interactions = "0.17.1"
+twilight-model = "0.17.1"

@@ -1,0 +1,15 @@
+[package]
+name = "piston-proxy-register"
+version = "1.0.0"
+edition = "2024"
+rust-version = "1.97"
+description = "Register piston-proxy-bot commands with Discord"
+license = "MIT"
+publish = false
+
+[dependencies]
+dotenvy = "0.15.7"
+piston-proxy-commands = { path = "../commands" }
+tokio = { version = "1.49.0", features = ["macros", "rt-multi-thread"] }
+twilight-http = "0.17.1"
+twilight-model = "0.17.1"
