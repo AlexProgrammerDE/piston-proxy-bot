@@ -40,8 +40,5 @@ jobs:
       - name: Run tests
         run: cargo test --workspace --all-features
 
-      - name: Install Worker builder
-        run: cargo install worker-build --version 0.8.5 --locked
-
       - name: Build Worker
-        run: worker-build --release
+        run: ./scripts/build-worker.sh
