@@ -1,0 +1,15 @@
+{
+  "name": "piston-proxy-bot",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "cf dev",
+    "build": "cf build",
+    "deploy": "cf deploy",
+    "cf-typegen": "cf workers types"
+  },
+  "devDependencies": {
+    "cf": "1.0.0-beta.7",
+    "wrangler": "4.145.0"
+  }
+}

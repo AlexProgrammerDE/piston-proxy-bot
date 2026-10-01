@@ -78,18 +78,21 @@ worker-build --release
 
 ## Deploy
 
-Store the Worker bindings in Cloudflare:
+Store `DISCORD_APPLICATION_ID`, `DISCORD_PUBLIC_KEY`, and `PROXY_API_URL` as
+Worker secrets in Cloudflare. Declare them in `cloudflare.config.ts`.
+
+Install the CLI and validate the Worker before deployment:
 
 ```bash
-wrangler secret put DISCORD_APPLICATION_ID
-wrangler secret put DISCORD_PUBLIC_KEY
-wrangler secret put PROXY_API_URL
+bun install
+bun run build
+bun cf deploy --prebuilt --dry-run
 ```
 
 Then deploy:
 
 ```bash
-wrangler deploy
+bun run deploy
 ```
 
 `DISCORD_TOKEN` is only needed by the local registration utility. The deployed
@@ -101,4 +104,4 @@ Worker does not need the bot token.
   formatting, and multipart response encoder.
 - `crates/commands/` contains the shared Discord command definitions.
 - `crates/register/` contains the native command-registration utility.
-- `wrangler.toml` defines the Worker build and deployment configuration.
+- `cloudflare.config.ts` defines the Worker bindings. `wrangler.config.ts` defines the Rust build command.

@@ -3,3 +3,6 @@
 .wrangler
 /build
 /target
+
+.cloudflare/
+node_modules/
