@@ -8,5 +8,5 @@ license = "MIT"
 publish = false
 
 [dependencies]
-twilight-interactions = "0.17.1"
-twilight-model = "0.17.1"
+twilight-interactions = "0.18.0"
+twilight-model = "0.18.0"
