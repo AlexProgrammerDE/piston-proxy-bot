@@ -1,0 +1,16 @@
+lefthook: bunx --no-install lefthook
+min_version: 2.2.2
+
+pre-commit:
+  commands:
+    whitespace:
+      run: git diff --cached --check
+    rustfmt:
+      glob: "*.rs"
+      run: cargo fmt --all -- --check
+
+pre-push:
+  commands:
+    clippy:
+      glob: "{*.rs,Cargo.toml,Cargo.lock,rust-toolchain.toml}"
+      run: cargo clippy --workspace --all-targets --all-features -- -D warnings

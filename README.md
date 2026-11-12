@@ -105,3 +105,9 @@ Worker does not need the bot token.
 - `crates/commands/` contains the shared Discord command definitions.
 - `crates/register/` contains the native command-registration utility.
 - `cloudflare.config.ts` defines the Worker bindings. `wrangler.config.ts` defines the Rust build command.
+
+## Git hooks
+
+`bun install` installs Lefthook for this checkout and preserves the existing preparation steps.
+Run `bun run pre-commit` to run the commit checks manually.
+The hooks use the existing project tools. Before pushing, they run the relevant project checks for changed files.
