@@ -11,8 +11,8 @@
     "pre-commit": "lefthook run pre-commit"
   },
   "devDependencies": {
-    "cf": "1.0.0-beta.29",
-    "wrangler": "4.160.0",
+    "cf": "1.0.0-beta.30",
+    "wrangler": "4.160.1",
     "lefthook": "2.2.2"
   }
 }
