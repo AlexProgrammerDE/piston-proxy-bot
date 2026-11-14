@@ -4,7 +4,7 @@ set -eu
 
 RUST_TOOLCHAIN_VERSION="1.97.1"
 WASM_TARGET="wasm32-unknown-unknown"
-WORKER_BUILD_VERSION="0.8.5"
+WORKER_BUILD_VERSION="0.9.0"
 
 worker_cargo_home="${CARGO_HOME:-${HOME:?HOME must be set}/.cargo}"
 PATH="${worker_cargo_home}/bin:${PATH}"
