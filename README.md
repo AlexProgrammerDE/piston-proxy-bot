@@ -71,6 +71,14 @@ cargo test --workspace --all-features
 worker-build --release
 ```
 
+Oxlint lints the TypeScript configuration files. Oxfmt checks the formatting
+of the TypeScript, Markdown, JSON, YAML, and TOML files:
+
+```bash
+bun run lint
+bun run format:check
+```
+
 ## Deploy
 
 Store `DISCORD_APPLICATION_ID`, `DISCORD_PUBLIC_KEY`, and `PROXY_API_URL` as

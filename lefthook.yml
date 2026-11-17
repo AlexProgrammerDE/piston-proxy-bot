@@ -8,6 +8,12 @@ pre-commit:
     rustfmt:
       glob: "*.rs"
       run: cargo fmt --all -- --check
+    oxlint:
+      glob: "*.{js,mjs,cjs,ts,mts,cts}"
+      run: bunx --no-install oxlint --deny-warnings --no-error-on-unmatched-pattern {staged_files}
+    oxfmt:
+      glob: "*.{js,mjs,cjs,ts,mts,cts,json,jsonc,md,yml,yaml,toml}"
+      run: bunx --no-install oxfmt --check --no-error-on-unmatched-pattern {staged_files}
 
 pre-push:
   commands:
