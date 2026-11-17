@@ -1,6 +1,5 @@
 .idea
 .dev.vars
-.wrangler
 /build
 /target
 

@@ -19,15 +19,9 @@ cached at Cloudflare's edge for two hours.
 
 ## Prerequisites
 
-The repository pins its Rust toolchain in `rust-toolchain.toml`. Install the
-Cloudflare Worker build helper and Wrangler before running the Worker:
-
-```bash
-cargo install worker-build --version 0.8.5 --locked
-```
-
-Wrangler must be available as the `wrangler` command and authenticated with
-your Cloudflare account for remote development or deployment.
+Install Bun, then run `bun install` to get the [`cf` CLI](https://developers.cloudflare.com/cf/)
+and the Cloudflare Vite plugin. `scripts/build-worker.sh` installs the pinned
+Rust toolchain and `worker-build` when they are missing.
 
 ## Configure local development
 
@@ -40,7 +34,7 @@ DISCORD_TOKEN=your_bot_token
 PROXY_API_URL=https://example.com/proxies
 ```
 
-Wrangler provides the application ID, public key, and proxy API URL to the
+`cf dev` provides the application ID, public key, and proxy API URL to the
 Worker. The registration utility reads the application ID and bot token
 directly from the same file. Do not commit `.dev.vars`.
 
@@ -49,10 +43,11 @@ directly from the same file. Do not commit `.dev.vars`.
 Start the Worker:
 
 ```bash
-wrangler dev
+bun run dev
 ```
 
-The health endpoint is available at `http://localhost:8787/`. Discord
+The script builds the Rust Worker first. The health endpoint is at `/` on the
+local URL that the dev server prints. Discord
 interactions are handled at `/interactions`.
 
 ## Register Discord commands
@@ -81,7 +76,7 @@ worker-build --release
 Store `DISCORD_APPLICATION_ID`, `DISCORD_PUBLIC_KEY`, and `PROXY_API_URL` as
 Worker secrets in Cloudflare. Declare them in `cloudflare.config.ts`.
 
-Install the CLI and validate the Worker before deployment:
+Validate the Worker before deployment:
 
 ```bash
 bun install
@@ -89,7 +84,9 @@ bun run build
 bun cf deploy --prebuilt --dry-run
 ```
 
-Then deploy:
+Pushes to `main` deploy through the Build and Test workflow. It needs the
+`CLOUDFLARE_API_TOKEN` secret, an account API token that can edit Workers
+scripts. To deploy by hand, sign in with `bunx cf auth login` and run:
 
 ```bash
 bun run deploy
@@ -104,7 +101,8 @@ Worker does not need the bot token.
   formatting, and multipart response encoder.
 - `crates/commands/` contains the shared Discord command definitions.
 - `crates/register/` contains the native command-registration utility.
-- `cloudflare.config.ts` defines the Worker bindings. `wrangler.config.ts` defines the Rust build command.
+- `cloudflare.config.ts` defines the Worker and its secrets. `scripts/build-worker.sh` builds the
+  Rust Worker into `build/`, and the Cloudflare Vite plugin in `vite.config.ts` bundles it.
 
 ## Git hooks
 
