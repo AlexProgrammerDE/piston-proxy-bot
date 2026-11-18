@@ -62,6 +62,22 @@
     "unicorn/prefer-at": "error",
     "unicorn/prefer-string-replace-all": "error",
     "unicorn/prefer-node-protocol": "error",
-    "unicorn/prefer-top-level-await": "error"
+    "unicorn/prefer-top-level-await": "error",
+    "unicorn/prefer-set-has": "error",
+    "unicorn/prefer-array-find": "error",
+    "unicorn/prefer-array-flat-map": "error",
+    "eslint/no-useless-call": "error",
+    "oxc/no-accumulating-spread": "error",
+    "typescript/no-unnecessary-type-assertion": "error",
+    "typescript/no-unnecessary-type-arguments": "error",
+    "typescript/restrict-template-expressions": "error",
+    "typescript/no-unnecessary-template-expression": "error",
+    "typescript/prefer-reduce-type-parameter": "error",
+    "typescript/prefer-readonly": "error",
+    "typescript/no-useless-empty-export": "error",
+    "typescript/no-unnecessary-condition": "error",
+    "typescript/prefer-nullish-coalescing": "error",
+    "typescript/require-await": "error",
+    "typescript/no-non-null-assertion": "error"
   }
 }
