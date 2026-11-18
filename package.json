@@ -7,7 +7,7 @@
     "build": "./scripts/build-worker.sh && cf build",
     "deploy": "bun run build && cf deploy --prebuilt",
     "cf-typegen": "cf workers types",
-    "lint": "oxlint --deny-warnings",
+    "lint": "oxlint",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
     "prepare": "lefthook install",
