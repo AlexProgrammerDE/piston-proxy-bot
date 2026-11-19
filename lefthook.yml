@@ -14,6 +14,9 @@ pre-commit:
 
 pre-push:
   commands:
+    cargo-deny:
+      glob: "{Cargo.toml,**/Cargo.toml,Cargo.lock,deny.toml}"
+      run: cargo deny --locked --workspace check
     clippy:
       glob: "{*.rs,Cargo.toml,Cargo.lock,rust-toolchain.toml,clippy.toml,.clippy.toml}"
       run: cargo clippy --workspace --all-targets --all-features -- -D warnings

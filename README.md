@@ -22,6 +22,7 @@ cached at Cloudflare's edge for two hours.
 Install Bun, then run `bun install` to get the [`cf` CLI](https://developers.cloudflare.com/cf/)
 and the Cloudflare Vite plugin. `scripts/build-worker.sh` installs the pinned
 Rust toolchain and `worker-build` when they are missing.
+Install cargo-deny 0.20.2 to run the workspace dependency check.
 
 ## Configure local development
 
@@ -68,6 +69,7 @@ Run the same checks used by continuous integration:
 cargo fmt --all -- --check
 cargo clippy --workspace --all-targets --all-features -- -D warnings
 cargo test --workspace --all-features
+cargo deny --locked --workspace check
 worker-build --release
 ```
 

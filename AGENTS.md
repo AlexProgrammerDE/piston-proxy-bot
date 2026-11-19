@@ -17,6 +17,7 @@
 - Before each commit, Lefthook checks staged whitespace. It runs the same Rust and Oxfmt format checks as CI when matching files are staged.
 - The commit message hook checks the first line for Conventional Commits syntax. It also accepts Git-generated merge, revert, fixup, squash, and amend subjects.
 - Before a push, Lefthook runs Clippy for Rust changes. For Worker or lint input changes, it builds the Worker before running Oxlint. The generated entry point is required for type checking.
+- Before a push, Lefthook runs `cargo deny --locked --workspace check` if a Cargo manifest, lockfile, or `deny.toml` changed.
 - CI runs the deploy dry-run.
 
 ## Cloudflare tooling
