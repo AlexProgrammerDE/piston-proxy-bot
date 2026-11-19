@@ -24,3 +24,23 @@
 
 - Use `cf` for direct Cloudflare CLI commands. Prefer existing package scripts for project workflows.
 - For new Cloudflare configuration, prefer `cloudflare.config.ts`. Preserve existing configuration formats during unrelated work.
+
+## Fuzzing
+
+- The `fuzz/` crate holds cargo-fuzz targets. It is not part of the main workspace, so stable Clippy, tests, and cargo-deny skip it.
+- `multipart_round_trip` decodes the Worker's multipart response and checks that the payload and attachment come back unchanged.
+- `verify_signature` checks that the Worker accepts genuine Discord signatures and rejects malformed, truncated, or tampered ones.
+- `register_application_id` parses `.dev.vars` and the registration utility's application ID.
+- Fuzzing needs `nightly-2026-11-01` and cargo-fuzz 0.13.2. Do not run it from Lefthook.
+- Run the commands from `fuzz/`:
+
+```bash
+cargo +nightly-2026-11-01 fuzz list
+mkdir -p corpus/<target>
+cargo +nightly-2026-11-01 fuzz run <target> corpus/<target> seeds/<target> -- -max_total_time=300
+cargo +nightly-2026-11-01 fuzz run <target> artifacts/<target>/<crash-file>
+cargo +nightly-2026-11-01 fuzz tmin <target> artifacts/<target>/<crash-file>
+```
+
+- Keep `seeds/` small. The `corpus/` and `artifacts/` directories are ignored by Git.
+- The Fuzz workflow runs each target for 60 seconds on related pull requests and pushes, and for 10 minutes every week.

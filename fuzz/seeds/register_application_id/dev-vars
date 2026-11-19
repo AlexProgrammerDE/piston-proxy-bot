@@ -1,0 +1,4 @@
+DISCORD_APPLICATION_ID=1332702321397727303
+DISCORD_PUBLIC_KEY=your_public_key
+DISCORD_TOKEN=your_bot_token
+PROXY_API_URL=https://example.com/proxies

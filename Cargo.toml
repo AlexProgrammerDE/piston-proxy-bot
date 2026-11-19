@@ -95,3 +95,5 @@ trivial_numeric_casts = "warn"
 let_underscore_drop = "warn"
 unit_bindings = "warn"
 unsafe_code = "forbid"
+# cargo-fuzz builds with `--cfg fuzzing` to expose internal parsers.
+unexpected_cfgs = { level = "warn", check-cfg = ["cfg(fuzzing)"] }

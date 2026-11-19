@@ -4,6 +4,13 @@ mod multipart;
 mod proxies;
 mod security;
 
+/// Internal parsers that the fuzz targets in `fuzz/` call.
+#[cfg(fuzzing)]
+pub mod fuzzing {
+    pub use crate::multipart::{EncodedMultipart, MultipartFile, encode};
+    pub use crate::security::verify_discord_request;
+}
+
 use multipart::{MultipartFile, encode};
 use piston_proxy_commands::{BotCommand, ProxyProtocol};
 use proxies::{ProxyApiResponse, ProxyLists};

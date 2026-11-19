@@ -1,0 +1,45 @@
+[package]
+name = "piston-proxy-bot-fuzz"
+version = "0.0.0"
+publish = false
+edition = "2024"
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+arbitrary = { version = "1.4.2", features = ["derive"] }
+dotenvy = "0.15.7"
+ed25519-compact = { version = "2.3.1", default-features = false, features = ["std"] }
+hex = "0.4.3"
+libfuzzer-sys = "0.4"
+piston-proxy-bot = { path = ".." }
+piston-proxy-commands = { path = "../crates/commands" }
+piston-proxy-register = { path = "../crates/register" }
+serde_json = "1.0.149"
+twilight-model = "0.18.0"
+
+# Keep the fuzz crate out of the main workspace.
+[workspace]
+members = ["."]
+
+[[bin]]
+name = "multipart_round_trip"
+path = "fuzz_targets/multipart_round_trip.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "verify_signature"
+path = "fuzz_targets/verify_signature.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "register_application_id"
+path = "fuzz_targets/register_application_id.rs"
+test = false
+doc = false
+bench = false

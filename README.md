@@ -111,6 +111,7 @@ Worker does not need the bot token.
   formatting, and multipart response encoder.
 - `crates/commands/` contains the shared Discord command definitions.
 - `crates/register/` contains the native command-registration utility.
+- `fuzz/` contains cargo-fuzz targets. See `AGENTS.md` for the commands.
 - `cloudflare.config.ts` defines the Worker and its secrets. `scripts/build-worker.sh` builds the
   Rust Worker into `build/`, and the Cloudflare Vite plugin in `vite.config.ts` bundles it.
 
