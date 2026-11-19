@@ -7,6 +7,7 @@ use std::{
 };
 
 use piston_proxy_commands::global_commands;
+use piston_proxy_register::parse_application_id;
 use twilight_http::Client;
 use twilight_model::id::{Id, marker::ApplicationMarker};
 
@@ -35,8 +36,9 @@ fn main() -> Result<(), Box<dyn Error>> {
     load_development_environment()?;
 
     let token = required_environment_variable("DISCORD_TOKEN")?;
-    let application_id = required_environment_variable("DISCORD_APPLICATION_ID")?.parse::<u64>()?;
-    register_commands(token, Id::new(application_id))
+    let application_id =
+        parse_application_id(&required_environment_variable("DISCORD_APPLICATION_ID")?)?;
+    register_commands(token, application_id)
 }
 
 #[tokio::main]
