@@ -1,3 +1,5 @@
+#![warn(clippy::indexing_slicing, clippy::arithmetic_side_effects)]
+
 mod multipart;
 mod proxies;
 mod security;
@@ -128,6 +130,10 @@ async fn handle_application_command(
     }
 }
 
+#[expect(
+    clippy::disallowed_methods,
+    reason = "This helper sends the request after setting the Cloudflare cache policy"
+)]
 async fn fetch_proxies(environment: &Env) -> worker::Result<Option<ProxyLists>> {
     let proxy_api_url = environment_value(environment, PROXY_API_URL)?;
     let mut request_init = RequestInit::new();

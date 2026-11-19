@@ -1,0 +1,12 @@
+allow-unwrap-in-tests = true
+allow-expect-in-tests = true
+allow-panic-in-tests = true
+
+disallowed-methods = [
+  { path = "std::env::set_var", reason = "Pass configuration explicitly so concurrent readers can safely use the process environment." },
+  { path = "std::env::remove_var", reason = "Pass configuration explicitly so concurrent readers can safely use the process environment." },
+  { path = "std::thread::sleep", reason = "Use tokio::time::sleep so waiting does not block the registration runtime." },
+  { path = "std::process::Command::output", reason = "Use tokio::process::Command so waiting for a child does not block the registration runtime." },
+  { path = "std::process::Command::status", reason = "Use tokio::process::Command so waiting for a child does not block the registration runtime." },
+  { path = "std::process::Command::spawn", reason = "Use tokio::process::Command to manage child processes from the registration runtime." },
+]

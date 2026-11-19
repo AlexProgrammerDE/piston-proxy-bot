@@ -1,3 +1,5 @@
+#![warn(clippy::indexing_slicing, clippy::arithmetic_side_effects)]
+
 use piston_proxy_commands::ProxyProtocol;
 use serde::Deserialize;
 

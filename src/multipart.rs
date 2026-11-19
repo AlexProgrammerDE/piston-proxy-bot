@@ -1,3 +1,5 @@
+#![warn(clippy::indexing_slicing, clippy::arithmetic_side_effects)]
+
 use serde::{Serialize, ser::Error as _};
 
 const BOUNDARY_PREFIX: &str = "----piston-proxy-bot-boundary";
@@ -20,7 +22,14 @@ pub fn encode<T: Serialize>(
 ) -> serde_json::Result<EncodedMultipart> {
     let payload = serde_json::to_vec(payload)?;
     let boundary = select_boundary(&payload, file.data)?;
-    let mut body = Vec::with_capacity(payload.len() + file.data.len() + 512);
+    let capacity = payload
+        .len()
+        .checked_add(file.data.len())
+        .and_then(|length| length.checked_add(512))
+        .ok_or_else(|| serde_json::Error::custom("the multipart body is too large"))?;
+    let mut body = Vec::new();
+    body.try_reserve_exact(capacity)
+        .map_err(serde_json::Error::custom)?;
 
     append_boundary(&mut body, &boundary);
     body.extend_from_slice(b"Content-Disposition: form-data; name=\"payload_json\"\r\n");

@@ -16,6 +16,7 @@ twilight-model = "0.18.0"
 all = { level = "warn", priority = -1 }
 pedantic = { level = "warn", priority = -1 }
 nursery = { level = "warn", priority = -1 }
+disallowed_methods = "warn"
 unwrap_used = "warn"
 expect_used = "warn"
 panic = "warn"

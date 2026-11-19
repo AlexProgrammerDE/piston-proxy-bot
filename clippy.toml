@@ -1,3 +1,9 @@
 allow-unwrap-in-tests = true
 allow-expect-in-tests = true
 allow-panic-in-tests = true
+
+disallowed-methods = [
+  { path = "std::env::set_var", reason = "Pass configuration explicitly so concurrent readers can safely use the process environment." },
+  { path = "std::env::remove_var", reason = "Pass configuration explicitly so concurrent readers can safely use the process environment." },
+  { path = "worker::Fetch::send", reason = "Use fetch_proxies for proxy API requests so they retain the Cloudflare cache policy." },
+]

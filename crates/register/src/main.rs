@@ -1,3 +1,5 @@
+#![warn(clippy::indexing_slicing, clippy::arithmetic_side_effects)]
+
 use std::{
     env,
     error::Error,
@@ -6,7 +8,7 @@ use std::{
 
 use piston_proxy_commands::global_commands;
 use twilight_http::Client;
-use twilight_model::id::Id;
+use twilight_model::id::{Id, marker::ApplicationMarker};
 
 fn load_development_environment() -> Result<(), Box<dyn Error>> {
     match dotenvy::from_filename(".dev.vars") {
@@ -29,17 +31,24 @@ fn required_environment_variable(name: &str) -> Result<String, io::Error> {
     })
 }
 
-#[tokio::main]
-async fn main() -> Result<(), Box<dyn Error>> {
+fn main() -> Result<(), Box<dyn Error>> {
     load_development_environment()?;
 
     let token = required_environment_variable("DISCORD_TOKEN")?;
     let application_id = required_environment_variable("DISCORD_APPLICATION_ID")?.parse::<u64>()?;
+    register_commands(token, Id::new(application_id))
+}
+
+#[tokio::main]
+async fn register_commands(
+    token: String,
+    application_id: Id<ApplicationMarker>,
+) -> Result<(), Box<dyn Error>> {
     let commands = global_commands();
     let client = Client::new(token);
 
     let registered_commands = client
-        .interaction(Id::new(application_id))
+        .interaction(application_id)
         .set_global_commands(&commands)
         .await?
         .models()

@@ -1,3 +1,5 @@
+#![warn(clippy::indexing_slicing, clippy::arithmetic_side_effects)]
+
 use ed25519_compact::{PublicKey, Signature};
 
 const PUBLIC_KEY_LENGTH: usize = 32;
@@ -18,7 +20,13 @@ pub fn verify_discord_request(
         return false;
     }
 
-    let mut message = Vec::with_capacity(timestamp.len() + body.len());
+    let Some(length) = timestamp.len().checked_add(body.len()) else {
+        return false;
+    };
+    let mut message = Vec::new();
+    if message.try_reserve_exact(length).is_err() {
+        return false;
+    }
     message.extend_from_slice(timestamp.as_bytes());
     message.extend_from_slice(body);
 
