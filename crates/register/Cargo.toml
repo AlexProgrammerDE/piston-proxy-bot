@@ -7,6 +7,9 @@ description = "Register piston-proxy-bot commands with Discord"
 license = "MIT"
 publish = false
 
+[lints]
+workspace = true
+
 [dependencies]
 dotenvy = "0.15.7"
 piston-proxy-commands = { path = "../commands" }

@@ -16,7 +16,7 @@ pub struct EncodedMultipart {
 
 pub fn encode<T: Serialize>(
     payload: &T,
-    file: MultipartFile<'_>,
+    file: &MultipartFile<'_>,
 ) -> serde_json::Result<EncodedMultipart> {
     let payload = serde_json::to_vec(payload)?;
     let boundary = select_boundary(&payload, file.data);
@@ -92,7 +92,7 @@ mod tests {
                 kind: 4,
                 content: "proxy response",
             },
-            MultipartFile {
+            &MultipartFile {
                 field_name: "files[0]",
                 filename: "proxies.txt",
                 content_type: "text/plain",
@@ -138,7 +138,7 @@ mod tests {
                 kind: 4,
                 content: "proxy response",
             },
-            MultipartFile {
+            &MultipartFile {
                 field_name: "files[0]",
                 filename: "proxies.txt",
                 content_type: "text/plain",

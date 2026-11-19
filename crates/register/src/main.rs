@@ -17,11 +17,15 @@ fn load_development_environment() -> Result<(), Box<dyn Error>> {
 }
 
 fn required_environment_variable(name: &str) -> Result<String, io::Error> {
-    env::var(name).map_err(|_| {
-        io::Error::new(
+    env::var(name).map_err(|error| match error {
+        env::VarError::NotPresent => io::Error::new(
             ErrorKind::NotFound,
             format!("the {name} environment variable is required"),
-        )
+        ),
+        env::VarError::NotUnicode(_) => io::Error::new(
+            ErrorKind::InvalidData,
+            format!("the {name} environment variable contains invalid Unicode"),
+        ),
     })
 }
 

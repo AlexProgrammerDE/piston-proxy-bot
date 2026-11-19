@@ -177,7 +177,7 @@ mod tests {
             assert_eq!(definition.name, command.name());
             assert_eq!(definition.kind, CommandType::ChatInput);
             assert_eq!(definition.contexts.as_ref(), Some(&expected_contexts));
-            assert!(definition.options.is_empty());
+            assert_eq!(definition.options, []);
         }
     }
 

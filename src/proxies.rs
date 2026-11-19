@@ -36,26 +36,26 @@ impl ProxyApiResponse {
 
 impl ProxyLists {
     #[must_use]
-    pub fn format(self, protocol: ProxyProtocol) -> String {
+    pub fn format(&self, protocol: ProxyProtocol) -> String {
         match protocol {
             ProxyProtocol::Http => self.http.join("\n"),
             ProxyProtocol::Https => self.https.join("\n"),
             ProxyProtocol::Socks4 => self.socks4.join("\n"),
             ProxyProtocol::Socks5 => self.socks5.join("\n"),
             ProxyProtocol::All => [
-                with_scheme("http", self.http),
-                with_scheme("https", self.https),
-                with_scheme("socks4", self.socks4),
-                with_scheme("socks5", self.socks5),
+                with_scheme("http", &self.http),
+                with_scheme("https", &self.https),
+                with_scheme("socks4", &self.socks4),
+                with_scheme("socks5", &self.socks5),
             ]
             .join("\n"),
         }
     }
 }
 
-fn with_scheme(scheme: &str, proxies: Vec<String>) -> String {
+fn with_scheme(scheme: &str, proxies: &[String]) -> String {
     proxies
-        .into_iter()
+        .iter()
         .map(|proxy| format!("{scheme}://{proxy}"))
         .collect::<Vec<_>>()
         .join("\n")

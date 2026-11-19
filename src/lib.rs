@@ -39,6 +39,11 @@ struct IncomingCommandData {
     name: String,
 }
 
+/// Handles requests to the Worker.
+///
+/// # Errors
+///
+/// Returns an error if routing, request handling, or response construction fails.
 #[event(fetch)]
 pub async fn fetch(
     request: Request,
@@ -52,6 +57,10 @@ pub async fn fetch(
         .await
 }
 
+#[expect(
+    clippy::needless_pass_by_value,
+    reason = "Worker Router::get requires a handler that takes RouteContext by value"
+)]
 fn root(_request: Request, context: RouteContext<()>) -> worker::Result<Response> {
     let application_id = environment_value(&context.env, DISCORD_APPLICATION_ID)?;
     Response::ok(format!("👋 {application_id}"))
@@ -76,9 +85,8 @@ async fn handle_interaction(
         return Response::error("Bad request signature.", 401);
     }
 
-    let interaction = match serde_json::from_slice::<IncomingInteraction>(&body) {
-        Ok(interaction) => interaction,
-        Err(_) => return error_response("Invalid interaction payload."),
+    let Ok(interaction) = serde_json::from_slice::<IncomingInteraction>(&body) else {
+        return error_response("Invalid interaction payload.");
     };
 
     match interaction.kind {
@@ -86,7 +94,7 @@ async fn handle_interaction(
             kind: InteractionResponseType::Pong,
             data: None,
         }),
-        InteractionType::ApplicationCommand => match interaction.data {
+        InteractionType::ApplicationCommand => match interaction.data.as_ref() {
             Some(command_data) => handle_application_command(command_data, &context.env).await,
             None => error_response("Invalid application command."),
         },
@@ -95,7 +103,7 @@ async fn handle_interaction(
 }
 
 async fn handle_application_command(
-    command_data: IncomingCommandData,
+    command_data: &IncomingCommandData,
     environment: &Env,
 ) -> worker::Result<Response> {
     let Some(command) = BotCommand::from_name(&command_data.name) else {
@@ -110,7 +118,7 @@ async fn handle_application_command(
             ))
         }
         BotCommand::Proxy(protocol) => match fetch_proxies(environment).await? {
-            Some(proxies) => proxy_response(protocol, proxies),
+            Some(proxies) => proxy_response(protocol, &proxies),
             None => ephemeral_response("Failed to fetch proxies."),
         },
     }
@@ -132,15 +140,14 @@ async fn fetch_proxies(environment: &Env) -> worker::Result<Option<ProxyLists>> 
         return Ok(None);
     }
 
-    let payload = match response.json::<ProxyApiResponse>().await {
-        Ok(payload) => payload,
-        Err(_) => return Ok(None),
+    let Ok(payload) = response.json::<ProxyApiResponse>().await else {
+        return Ok(None);
     };
 
     Ok(payload.into_proxy_lists())
 }
 
-fn proxy_response(protocol: ProxyProtocol, proxies: ProxyLists) -> worker::Result<Response> {
+fn proxy_response(protocol: ProxyProtocol, proxies: &ProxyLists) -> worker::Result<Response> {
     let file_data = proxies.format(protocol).into_bytes();
     let mut attachment = Attachment::from_bytes(protocol.filename().to_owned(), file_data, 0);
     attachment.description(protocol.attachment_description().to_owned());
@@ -161,10 +168,10 @@ fn proxy_response(protocol: ProxyProtocol, proxies: ProxyLists) -> worker::Resul
         .as_ref()
         .and_then(|data| data.attachments.as_ref())
         .and_then(|attachments| attachments.first())
-        .expect("the proxy response always contains its attachment");
+        .ok_or_else(|| worker::Error::RustError("Missing proxy response attachment.".into()))?;
     let encoded = encode(
         &response,
-        MultipartFile {
+        &MultipartFile {
             field_name: "files[0]",
             filename: &attachment.filename,
             content_type: "text/plain",
