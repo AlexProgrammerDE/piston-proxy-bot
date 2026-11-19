@@ -1,4 +1,4 @@
-use serde::Serialize;
+use serde::{Serialize, ser::Error as _};
 
 const BOUNDARY_PREFIX: &str = "----piston-proxy-bot-boundary";
 
@@ -19,7 +19,7 @@ pub fn encode<T: Serialize>(
     file: &MultipartFile<'_>,
 ) -> serde_json::Result<EncodedMultipart> {
     let payload = serde_json::to_vec(payload)?;
-    let boundary = select_boundary(&payload, file.data);
+    let boundary = select_boundary(&payload, file.data)?;
     let mut body = Vec::with_capacity(payload.len() + file.data.len() + 512);
 
     append_boundary(&mut body, &boundary);
@@ -53,17 +53,19 @@ fn append_boundary(body: &mut Vec<u8>, boundary: &str) {
     body.extend_from_slice(b"\r\n");
 }
 
-fn select_boundary(payload: &[u8], file: &[u8]) -> String {
-    for suffix in 0_u64.. {
+fn select_boundary(payload: &[u8], file: &[u8]) -> serde_json::Result<String> {
+    for suffix in 0..=u64::MAX {
         let boundary = format!("{BOUNDARY_PREFIX}-{suffix:x}");
         if !contains_bytes(payload, boundary.as_bytes())
             && !contains_bytes(file, boundary.as_bytes())
         {
-            return boundary;
+            return Ok(boundary);
         }
     }
 
-    unreachable!("the multipart boundary suffix space is exhausted")
+    Err(serde_json::Error::custom(
+        "the multipart boundary suffix space is exhausted",
+    ))
 }
 
 fn contains_bytes(haystack: &[u8], needle: &[u8]) -> bool {

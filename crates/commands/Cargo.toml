@@ -7,9 +7,73 @@ description = "Shared Discord command definitions for piston-proxy-bot"
 license = "MIT"
 publish = false
 
-[lints]
-workspace = true
-
 [dependencies]
 twilight-interactions = "0.18.0"
 twilight-model = "0.18.0"
+
+# Cargo does not merge crate-specific lints with inherited workspace lints.
+[lints.clippy]
+all = { level = "warn", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
+nursery = { level = "warn", priority = -1 }
+unwrap_used = "warn"
+expect_used = "warn"
+panic = "warn"
+todo = "warn"
+unimplemented = "warn"
+dbg_macro = "warn"
+allow_attributes = "warn"
+allow_attributes_without_reason = "warn"
+map_err_ignore = "warn"
+unused_result_ok = "warn"
+redundant_clone = "warn"
+
+# Safety and correctness
+undocumented_unsafe_blocks = "warn"
+multiple_unsafe_ops_per_block = "warn"
+string_slice = "warn"
+float_cmp_const = "warn"
+lossy_float_literal = "warn"
+mem_forget = "warn"
+exit = "warn"
+rc_buffer = "warn"
+fn_to_numeric_cast_any = "warn"
+infinite_loop = "warn"
+try_err = "warn"
+rest_pat_in_fully_bound_structs = "warn"
+iter_over_hash_type = "warn"
+let_underscore_must_use = "warn"
+significant_drop_tightening = "warn"
+
+# Better test failures
+assertions_on_result_states = "warn"
+missing_assert_message = "warn"
+
+# Noisy nursery lints
+missing_const_for_fn = "allow"
+option_if_let_else = "allow"
+future_not_send = "allow"
+# Conflicts with rustc's unreachable_pub lint.
+redundant_pub_crate = "allow"
+suboptimal_flops = "allow"
+
+unnecessary_safety_comment = "warn"
+unnecessary_safety_doc = "warn"
+panic_in_result_fn = "warn"
+unreachable = "warn"
+clone_on_ref_ptr = "warn"
+wildcard_enum_match_arm = "warn"
+format_push_string = "warn"
+empty_structs_with_brackets = "warn"
+empty_enum_variants_with_brackets = "warn"
+
+[lints.rust]
+unused_qualifications = "warn"
+unused_lifetimes = "warn"
+redundant_lifetimes = "warn"
+trivial_numeric_casts = "warn"
+let_underscore_drop = "warn"
+unit_bindings = "warn"
+unsafe_code = "forbid"
+unreachable_pub = "warn"
+missing_debug_implementations = "warn"

@@ -89,6 +89,10 @@ async fn handle_interaction(
         return error_response("Invalid interaction payload.");
     };
 
+    #[expect(
+        clippy::wildcard_enum_match_arm,
+        reason = "Twilight's non-exhaustive interaction type needs a fallback for unsupported variants"
+    )]
     match interaction.kind {
         InteractionType::Ping => json_response(&InteractionResponse {
             kind: InteractionResponseType::Pong,
