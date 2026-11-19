@@ -8,15 +8,29 @@ pre-commit:
     rustfmt:
       glob: "*.rs"
       run: cargo fmt --all -- --check
-    oxlint:
-      glob: "*.{js,mjs,cjs,ts,mts,cts}"
-      run: bunx --no-install oxlint --no-error-on-unmatched-pattern {staged_files}
     oxfmt:
-      glob: "*.{js,mjs,cjs,ts,mts,cts,json,jsonc,md,yml,yaml,toml}"
-      run: bunx --no-install oxfmt --check --no-error-on-unmatched-pattern {staged_files}
+      glob: "*.{js,mjs,cjs,jsx,ts,mts,cts,tsx,json,jsonc,md,mdx,yml,yaml,toml,css,scss,less,html,vue,svelte,astro,graphql,gql,xml,svg,hbs,handlebars}"
+      run: bun run format:check
 
 pre-push:
   commands:
     clippy:
-      glob: "{*.rs,Cargo.toml,Cargo.lock,rust-toolchain.toml}"
+      glob: "{*.rs,Cargo.toml,Cargo.lock,rust-toolchain.toml,clippy.toml,.clippy.toml}"
       run: cargo clippy --workspace --all-targets --all-features -- -D warnings
+    worker-lint:
+      glob: "{*.{js,mjs,cjs,jsx,ts,mts,cts,tsx,rs},Cargo.toml,Cargo.lock,rust-toolchain.toml,package.json,bun.lock,.oxlintrc.json,scripts/build-worker.sh}"
+      run: bun run build && bun run lint
+
+commit-msg:
+  commands:
+    conventional-commit:
+      run: |
+        subject=$(sed -n '1p' "{1}") || exit 1
+        case "$subject" in
+          "Merge "*|'Revert "'*|"fixup! "*|"squash! "*|"amend! "*) exit 0 ;;
+        esac
+        if printf '%s\n' "$subject" | grep -Eq '^(feat|fix|docs|refactor|test|chore|ci|build|perf|style|revert)(\([^()]+\))?!?: [^[:space:]]'; then
+          exit 0
+        fi
+        printf '%s\n' 'Use a Conventional Commit subject, for example: fix(worker): handle proxy errors' >&2
+        exit 1
